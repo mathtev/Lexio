@@ -89,4 +89,6 @@ model Word {
     lang_from    String @db.Char(2)
     lang_to      String @db.Char(2)
     level        Level  @default(A1)
+
+    @@unique([name, translation])
 }
