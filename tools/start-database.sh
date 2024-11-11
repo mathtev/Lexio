@@ -33,10 +33,10 @@ if [ "$(docker ps -q -a -f name=$DB_CONTAINER_NAME)" ]; then
 fi
 
 # import env variables from .env using dotenv
-if [ -f .env ]; then
-  export $(grep -v '^#' .env | xargs)
+if [ -f ../.env ]; then
+  export $(grep -v '^#' ../.env | xargs)
 else
-  echo ".env file not found. Please create one and try again."
+  echo ".env file not found in the parent folder. Please create one and try again."
   exit 1
 fi
 
