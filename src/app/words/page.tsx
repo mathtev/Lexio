@@ -1,3 +1,4 @@
+import { Level } from "@prisma/client";
 import Link from "next/link";
 import { Card } from "~/components/ui/card";
 
@@ -39,21 +40,19 @@ export const wordsList: Word[] = [
 ];
 
 export default function Words() {
+  const levels = Object.values(Level);
   return (
     <PageContainer className="grid grid-cols-3 grid-rows-2 gap-12 bg-blue-200 p-12">
-      <StudySetCard level="A1" />
-      <StudySetCard level="A2" />
-      <StudySetCard level="B1" />
-      <StudySetCard level="B2" />
-      <StudySetCard level="C1" />
-      <StudySetCard level="C2" />
+      {levels.map((level) => (
+        <StudySetCard key={level} level={level} />
+      ))}
     </PageContainer>
   );
 }
 
 const StudySetCard = ({ level }: { level: string }) => {
   return (
-    <Link href={`/words/${level.toLowerCase()}`} className="h-full">
+    <Link href={`/words/${level.toUpperCase()}`} className="h-full">
       <Card className="flex h-full cursor-pointer items-center justify-center border border-black transition-colors duration-100 hover:bg-blue-300">
         <div className="text-2xl font-bold">{level}</div>
       </Card>

@@ -8,9 +8,17 @@ import {
   TableBody,
   TableCell,
 } from "~/components/ui/table";
+import { api } from "~/trpc/server";
 
-export default function WordsList({ params }: { params: { level: string } }) {
-  const words = wordsList.filter((word) => word.level === params.level);
+export default async function WordsList({
+  params,
+}: {
+  params: { level: string };
+}) {
+  const words = await api.word.getWords({ level: params.level });
+
+  console.log("words", words);
+
   return (
     <PageContainer className="flex justify-center p-8">
       <div className="w-4/5">

@@ -19,19 +19,19 @@ async function importWords(filePath) {
     crlfDelay: Infinity,
   });
 
-  let level, lang_from, lang_to;
+  let level, langFrom, langTo;
 
   for await (const line of rl) {
     try {
-      if (!level && !lang_from && !lang_to) {
+      if (!level && !langFrom && !langTo) {
         {
-          [level, lang_from, lang_to] = line.split(";");
+          [level, langFrom, langTo] = line.split(";");
           continue;
         }
       }
 
       const [name, translation] = line.split(";");
-      if (name && translation && level && lang_from && lang_to) {
+      if (name && translation && level && langFrom && langTo) {
         await prisma.word.upsert({
           where: {
             name_translation: {
@@ -41,13 +41,13 @@ async function importWords(filePath) {
           },
           update: {
             level: level.trim(),
-            lang_from: lang_from.trim(),
-            lang_to: lang_to.trim(),
+            langFrom: langFrom.trim(),
+            langTo: langTo.trim(),
           },
           create: {
             level: level.trim(),
-            lang_from: lang_from.trim(),
-            lang_to: lang_to.trim(),
+            langFrom: langFrom.trim(),
+            langTo: langTo.trim(),
             name: name.trim(),
             translation: translation.trim(),
           },
@@ -74,4 +74,4 @@ async function importAllWordsFromDir(dirPath) {
 }
 
 // Replace 'resources/words' with the actual path to your directory
-importAllWordsFromDir("../resources/words");
+importAllWordsFromDir("resources/words");

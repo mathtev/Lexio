@@ -32,11 +32,16 @@ if [ "$(docker ps -q -a -f name=$DB_CONTAINER_NAME)" ]; then
   exit 0
 fi
 
-# import env variables from .env using dotenv
-if [ -f ../.env ]; then
-  export $(grep -v '^#' ../.env | xargs)
+echo "Current working directory: $(pwd)"
+
+# Import env variables from .env using dotenv
+if [ -f .env ]; then
+  echo ".env file found at $(pwd)/.env"
+  export $(grep -v '^#' .env | xargs)
+  echo "Environment variables loaded:"
+  env | grep -E 'AUTH_SECRET|AUTH_DISCORD_ID|AUTH_DISCORD_SECRET|DATABASE_URL'
 else
-  echo ".env file not found in the parent folder. Please create one and try again."
+  echo ".env file not found in the current directory. Please create one and try again."
   exit 1
 fi
 
