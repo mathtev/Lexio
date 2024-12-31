@@ -8,8 +8,8 @@ import { WordSchema } from "validators/word";
 export default async function WordsList({}) {
   const session = await auth();
 
-  const defaultOptions: WordSchema = {
-    level: "",
+  const defaultOptions: Required<WordSchema> = {
+    levels: [],
     search: "",
     limit: 25,
     start: 0,

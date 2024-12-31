@@ -7,15 +7,33 @@ import { api } from "~/trpc/react";
 import { columns } from "./columns";
 import { TableFilters } from "./filters";
 
-export const WordsTable: React.FC<{ defaultOptions: WordSchema }> = ({
+export type WordsTableFilters = {
+  name: string;
+  levels: string[];
+};
+
+export const WordsTable: React.FC<{ defaultOptions: Required<WordSchema> }> = ({
   defaultOptions,
 }) => {
-  const [filters, setFilters] = useState(defaultOptions);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<WordsTableFilters>({
+    name: defaultOptions.search,
+    levels: defaultOptions.levels,
+  });
 
-  const { data } = api.word.getWords.useQuery(filters);
+  const { data } = api.word.getWords.useQuery({
+    start: (currentPage - 1) * defaultOptions.limit,
+    limit: defaultOptions.limit,
+    search: filters.name,
+    levels: filters.levels,
+  });
 
   const onFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
+  };
+
+  const onPageChange = (newPage: number) => {
+    setCurrentPage(newPage);
   };
 
   return (
@@ -26,6 +44,12 @@ export const WordsTable: React.FC<{ defaultOptions: WordSchema }> = ({
         columns={columns}
         data={data?.words ?? []}
         className="flex-shrink"
+        pagination={{
+          currentPage,
+          pageSize: defaultOptions.limit,
+          total: data?.total ?? 0,
+          onPageChange: onPageChange,
+        }}
       />
     </div>
   );

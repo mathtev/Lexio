@@ -4,7 +4,6 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -21,23 +20,34 @@ import { Button } from "../../ui/button";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pagination?: {
+    currentPage: number;
+    pageSize: number;
+    onPageChange: (page: number) => void;
+    total: number;
+  };
   className?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pagination,
   className,
 }: DataTableProps<TData, TValue>) {
+  const hasMore = pagination
+    ? pagination.total > pagination.pageSize * pagination.currentPage
+    : false;
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
+    rowCount: pagination?.total ?? 0,
+    state: {
       pagination: {
-        pageIndex: 0,
-        pageSize: 25,
+        pageIndex: pagination?.currentPage ? pagination.currentPage - 1 : 0,
+        pageSize: pagination?.pageSize ?? 0,
       },
     },
   });
@@ -97,31 +107,33 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No data
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      {pagination && (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
+            disabled={pagination.currentPage === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
+            disabled={!hasMore}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
