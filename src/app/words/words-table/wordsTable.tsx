@@ -30,6 +30,7 @@ export const WordsTable: React.FC<{ defaultOptions: Required<WordSchema> }> = ({
 
   const onFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
+    setCurrentPage(1);
   };
 
   const onPageChange = (newPage: number) => {
@@ -37,7 +38,7 @@ export const WordsTable: React.FC<{ defaultOptions: Required<WordSchema> }> = ({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col gap-y-4">
       <TableFilters filters={filters} onChange={onFilterChange} />
       <h1 className="font-bold">List title</h1>
       <DataTable
